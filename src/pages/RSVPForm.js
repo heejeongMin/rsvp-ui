@@ -1,6 +1,6 @@
 // src/RSVPForm.js
 import React, { useState, useEffect } from "react";
-import { Layout, theme, Form, Button, Select, Card } from "antd";
+import { Layout, theme, Form, Button, Card, Divider, Radio, Space } from "antd";
 import { useParams } from "react-router-dom";
 
 const { Content } = Layout;
@@ -29,6 +29,7 @@ const RSVPForm = () => {
     },
   };
 
+  const [loading, setLoading] = useState(true);
   const { id } = useParams(); // Get unique ID from the URL
   // const [name, setName] = useState("");
   // const [willAttend, setWillAttend] = useState("yes");
@@ -38,32 +39,35 @@ const RSVPForm = () => {
   useEffect(() => {
     // Fetch form data based on ID if needed
     // e.g., fetch(`/api/getFormData/${id}`).then(...)
-    setRsvpForm({
-      name: "test-rsvp-name",
-      startDateAndTime: "2024-08-18 09:00",
-      endDateAndTime: "2024-08-18 18:00",
-      location: "online",
-      options: [
-        {
-          label: "참가",
-          value: "Y",
-        },
-        {
-          label: "불참",
-          value: "N",
-        },
-        {
-          label: "미정",
-          value: "YN",
-        },
-      ],
-
-      // description: "testset",
-    });
+    const fetchRSVPFrom = async () => {
+      setRsvpForm({
+        name: "test-rsvp-name",
+        startDateAndTime: "2024-08-18 09:00",
+        endDateAndTime: "2024-08-18 18:00",
+        location: "online",
+        options: [
+          {
+            label: "참가",
+            value: "Y",
+          },
+          {
+            label: "불참",
+            value: "N",
+          },
+          {
+            label: "미정",
+            value: "YN",
+          },
+        ],
+        deadline: "2024-08-17 17:00",
+        // description: "testset",
+      });
+      setLoading(false);
+    };
+    fetchRSVPFrom();
   }, [id]);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = () => {
     setSubmitted(true);
 
     // Simulate sending data to a server
@@ -85,8 +89,11 @@ const RSVPForm = () => {
   };
 
   if (submitted) {
-    // return <p>Thank you for your RSVP, {name}!</p>;
     return <p>Thank you for your RSVP!</p>;
+  }
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -124,6 +131,13 @@ const RSVPForm = () => {
               <p>{rsvpForm.description}</p>
             </div>
           )}
+          {rsvpForm.deadline && (
+            <div>
+              <p>회신 기한</p>
+              <p>{rsvpForm.deadline}</p>
+            </div>
+          )}
+          <Divider>RSVP</Divider>
           <Form
             {...formItemLayout}
             variant="filled"
@@ -133,16 +147,22 @@ const RSVPForm = () => {
             }}
           >
             <Form.Item
-              label="RSVP"
               name="rsvp"
               rules={[
                 {
                   required: true,
-                  message: "선택해주세요",
+                  message: "회신을 선택해주세요",
                 },
               ]}
             >
-              <Select style={{ width: "100%" }} options={rsvpForm.options} />
+              {/* <Select style={{ width: "100%" }} options={rsvpForm.options} /> */}
+              <Radio.Group>
+                <Space direction="vertical">
+                  {rsvpForm.options.map((el) => (
+                    <Radio value={el.value}>{el.label}</Radio>
+                  ))}
+                </Space>
+              </Radio.Group>
             </Form.Item>
             <Form.Item
               wrapperCol={{

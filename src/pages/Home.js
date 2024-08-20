@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Layout, Form, Input, Button, Modal, Select, DatePicker } from "antd";
+import Success from "../components/Success";
 
 const { Content } = Layout;
 
 const Home = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [success, setSuccess] = useState(false);
+
   const options = [
     {
       label: "참가",
@@ -33,11 +36,16 @@ const Home = () => {
   const handleOk = () => {
     //call backend
     closeModal();
+    setSuccess(true);
   };
 
   const handleCancel = () => {
     closeModal();
   };
+
+  if (success) {
+    return <Success path={123} />;
+  }
 
   return (
     <Content style={{ padding: "48px 48px" }}>
@@ -57,7 +65,7 @@ const Home = () => {
           initialValues={{ remember: true }}
         >
           <Form.Item
-            label="주제"
+            label="제목"
             name="name"
             rules={[{ required: true, message: "주제를 입력해주세요" }]}
           >
@@ -74,7 +82,6 @@ const Home = () => {
             label="모임 시작 일시"
             name="startDateAndTime"
             rules={[{ required: true, message: "모임 시작 시간을 입력하세요" }]}
-            size={"Small"}
           >
             <DatePicker showTime />
           </Form.Item>
@@ -82,7 +89,6 @@ const Home = () => {
             label="모임 종료 일시"
             name="endDateAndTime"
             rules={[{ required: true, message: "모임 종료 시간을 입력하세요" }]}
-            size={"Small"}
           >
             <DatePicker showTime />
           </Form.Item>
@@ -99,6 +105,9 @@ const Home = () => {
             rules={[{ required: true, message: "회신 옵션을 선택하세요" }]}
           >
             <Select mode="tags" style={{ width: "100%" }} options={options} />
+          </Form.Item>
+          <Form.Item label="회신 기한" name="rsvpDeadline">
+            <DatePicker showTime />
           </Form.Item>
           <Form.Item label="모임 내용" name="description">
             <Input.TextArea />

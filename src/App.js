@@ -12,6 +12,7 @@ import Me from "./pages/Me";
 import RSVPForm from "./pages/RSVPForm";
 import Contact from "./pages/Contact";
 import "./App.css";
+import Success from "./components/Success";
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -37,6 +38,7 @@ const App = () => {
             <Route path="/me" element={<Me />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/rsvp/:id" element={<RSVPForm />} />
+            <Route path="/success" element={<Success />} />
           </Routes>
         </div>
       </Layout>
