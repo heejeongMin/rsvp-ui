@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Layout, Form, Input, Button, Modal, Select, DatePicker } from "antd";
-import Success from "../components/Success";
+import ActionResult from "../components/ActionResult";
 
 const { Content } = Layout;
 
 const Home = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const [success, setSuccess] = useState(false);
+  const [result, setResult] = useState(false);
 
   const options = [
     {
@@ -36,15 +36,21 @@ const Home = () => {
   const handleOk = () => {
     //call backend
     closeModal();
-    setSuccess(true);
+    setResult(true);
   };
 
   const handleCancel = () => {
     closeModal();
   };
 
-  if (success) {
-    return <Success path={123} />;
+  if (result) {
+    return (
+      <ActionResult
+        result="success"
+        title="RSVP 보내기 성공"
+        message={"RSVP 링크 : http://localhost:3000/rsvp/123"}
+      />
+    );
   }
 
   return (

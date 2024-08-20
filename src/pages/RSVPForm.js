@@ -114,26 +114,36 @@ const RSVPForm = () => {
           }}
         >
           <div>
-            <p>시작 일시</p>
+            <p>
+              <b>시작 일시</b>
+            </p>
             <p>{rsvpForm.startDateAndTime}</p>
           </div>
           <div>
-            <p>종료 일시</p>
+            <p>
+              <b>종료 일시</b>
+            </p>
             <p>{rsvpForm.endDateAndTime}</p>
           </div>
           <div>
-            <p>모임 장소</p>
+            <p>
+              <b>모임 장소</b>
+            </p>
             <p>{rsvpForm.location}</p>
           </div>
           {rsvpForm.description && (
             <div>
-              <p>모임 내용</p>
+              <p>
+                <b>모임 내용</b>
+              </p>
               <p>{rsvpForm.description}</p>
             </div>
           )}
           {rsvpForm.deadline && (
             <div>
-              <p>회신 기한</p>
+              <p>
+                <b>회신 기한</b>
+              </p>
               <p>{rsvpForm.deadline}</p>
             </div>
           )}

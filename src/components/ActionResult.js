@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from "react";
 
-import { useLocation } from "react-router-dom";
-
 import { Button, Result } from "antd";
 import { useNavigate } from "react-router-dom";
 
-const Success = (props) => {
+const ActionResult = (props) => {
   const navigate = useNavigate();
-  const { path } = props;
+  const { result, title, message } = props;
 
   const [loading, setLoading] = useState(true);
-  const [link, setLink] = useState("");
+  const [subtitle, setSubtitle] = useState("");
 
   const redirect = () => {
     navigate("/me", { state: { refresh: true } });
   };
 
   useEffect(() => {
-    setLink("http://localhost:3000/rsvp/" + path);
+    setSubtitle(message);
     setLoading(false);
   }, []);
 
@@ -28,10 +26,10 @@ const Success = (props) => {
   return (
     <Result
       status="success"
-      title="RSVP 만들기 성공!"
-      subTitle={"RSVP 링크 : " + link}
+      title={title}
+      subTitle={subtitle}
       extra={[
-        <Button type="primary" onClick={redirect}>
+        <Button type="primary" onClick={redirect} key="1">
           마이페이지 이동
         </Button>,
       ]}
@@ -39,4 +37,4 @@ const Success = (props) => {
   );
 };
 
-export default Success;
+export default ActionResult;
