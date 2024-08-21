@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Space, Card, Divider } from "antd";
+import { Space, Card, Divider, Button, Modal } from "antd";
+import { ExclamationCircleFilled } from "@ant-design/icons";
+
+const { confirm } = Modal;
 
 const Me = () => {
   const [loading, setLoading] = useState(true);
-  const [currentRSVP, setCurrentRSVP] = useState({});
+  const [currentRSVP, setCurrentRSVP] = useState();
   const [totalNumber, setTotalNumber] = useState(0);
 
   const getCurrentRSVP = () => {
@@ -40,6 +43,29 @@ const Me = () => {
     setLoading(false);
   }, []);
 
+  const showModal = () => {
+    confirm({
+      title: "아직 RSVP가 진행중입니다.",
+      icon: <ExclamationCircleFilled />,
+      content: "정말 종료하시겠습니까?",
+      okText: "확인",
+      okType: "danger",
+      okButtonProps: {
+        disabled: false,
+      },
+      cancelText: "취소",
+      onOk() {
+        closeRSVP();
+      },
+      onCancel() {},
+    });
+  };
+
+  const closeRSVP = () => {
+    setCurrentRSVP();
+    setTotalNumber(0);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -53,13 +79,13 @@ const Me = () => {
         padding: "48px 48px",
       }}
     >
-      <Card title="RSVP">
+      <Card title="RSVP" extra={<a href="#">지난 RSVP 보기</a>}>
         {!currentRSVP && <p>현재 진행중인 RSVP가 없습니다</p>}
         {currentRSVP && (
           <Card
             type="inner"
             title={currentRSVP.name}
-            extra={<a href="#">RSVP 종료하기</a>}
+            extra={<Button onClick={showModal}>RSVP 종료하기</Button>}
           >
             <div>
               <p>총 회신 수 : {totalNumber}</p>
@@ -99,12 +125,9 @@ const Me = () => {
               <p>
                 <b>회신 옵션</b>
               </p>
-              <p>
-                {" "}
-                {currentRSVP.options.map((el) => (
-                  <span>{el.label} </span>
-                ))}
-              </p>
+              {currentRSVP.options.map((el) => (
+                <span>{el} </span>
+              ))}
             </div>
             {currentRSVP.description && (
               <div>
