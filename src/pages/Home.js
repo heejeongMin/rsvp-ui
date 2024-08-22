@@ -73,7 +73,7 @@ const Home = () => {
           <Form.Item
             label="제목"
             name="name"
-            rules={[{ required: true, message: "주제를 입력해주세요" }]}
+            rules={[{ required: true, message: "제목을 입력해주세요" }]}
           >
             <Input />
           </Form.Item>

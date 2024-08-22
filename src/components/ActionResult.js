@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const ActionResult = (props) => {
   const navigate = useNavigate();
-  const { result, title, message } = props;
+  const { result, title, message, directToMe = "true" } = props;
 
   const [loading, setLoading] = useState(true);
   const [subtitle, setSubtitle] = useState("");
@@ -23,18 +23,22 @@ const ActionResult = (props) => {
     return <div>Loading...</div>;
   }
 
-  return (
-    <Result
-      status="success"
-      title={title}
-      subTitle={subtitle}
-      extra={[
-        <Button type="primary" onClick={redirect} key="1">
-          마이페이지 이동
-        </Button>,
-      ]}
-    />
-  );
+  if (directToMe == "true") {
+    return (
+      <Result
+        status={result}
+        title={title}
+        subTitle={subtitle}
+        extra={[
+          <Button type="primary" onClick={redirect} key="1">
+            마이페이지 이동
+          </Button>,
+        ]}
+      />
+    );
+  } else {
+    return <Result status={result} title={title} subTitle={subtitle} />;
+  }
 };
 
 export default ActionResult;

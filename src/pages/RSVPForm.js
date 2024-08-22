@@ -1,6 +1,18 @@
 // src/RSVPForm.js
 import React, { useState, useEffect } from "react";
-import { Layout, theme, Form, Button, Card, Divider, Radio, Space } from "antd";
+import ActionResult from "../components/ActionResult";
+
+import {
+  Layout,
+  theme,
+  Form,
+  Button,
+  Card,
+  Divider,
+  Radio,
+  Space,
+  Input,
+} from "antd";
 import { useParams } from "react-router-dom";
 
 const { Content } = Layout;
@@ -33,7 +45,7 @@ const RSVPForm = () => {
   const { id } = useParams(); // Get unique ID from the URL
   // const [name, setName] = useState("");
   // const [willAttend, setWillAttend] = useState("yes");
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(0);
   var [rsvpForm, setRsvpForm] = useState({});
 
   useEffect(() => {
@@ -68,28 +80,39 @@ const RSVPForm = () => {
   }, [id]);
 
   const handleSubmit = () => {
-    setSubmitted(true);
+    setLoading(true);
+    var result = 2;
 
-    // Simulate sending data to a server
-    // fetch("/api/rsvp", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ id, name, willAttend }),
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     console.log("Success:", data);
-    //     setSubmitted(true);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error:", error);
-    //   });
+    try {
+      //call api
+      result = 1;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+      setSubmitted(result);
+    }
+
+    console.log(submitted);
   };
 
-  if (submitted) {
-    return <p>Thank you for your RSVP!</p>;
+  if (submitted === 1) {
+    return (
+      <ActionResult
+        result="success"
+        title="주최자에게 성공적으로 회신하였습니다."
+        directToMe="false"
+      />
+    );
+  } else if (submitted === 2) {
+    return (
+      <ActionResult
+        result="error"
+        title="개발자에게 이메일 전송에 실패하였습니다."
+        message="다시 시도해주세요. 계속 실패 시 앱스토어로 연락부탁드립니다."
+        directToMe="false"
+      />
+    );
   }
 
   if (loading) {
@@ -173,6 +196,16 @@ const RSVPForm = () => {
                   ))}
                 </Space>
               </Radio.Group>
+            </Form.Item>
+            <Form.Item
+              label="이름"
+              name="name"
+              rules={[{ required: true, message: "이름을 입력해주세요" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item label="회신" name="reply">
+              <Input.TextArea />
             </Form.Item>
             <Form.Item
               wrapperCol={{

@@ -66,7 +66,7 @@ const Contact = () => {
     }
   };
 
-  if (emailSent == 1) {
+  if (emailSent === 1) {
     return (
       <ActionResult
         result="success"
@@ -74,7 +74,7 @@ const Contact = () => {
         message="작성하신 이메일로 회신을 하도록 하겠습니다."
       />
     );
-  } else if (emailSent == 2) {
+  } else if (emailSent === 2) {
     return (
       <ActionResult
         result="error"
