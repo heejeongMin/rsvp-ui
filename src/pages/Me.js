@@ -21,6 +21,8 @@ const Me = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [history, setHistory] = useState();
+  const [int, setInt] = useState(0); //test property
+  const [displayDetailList, setDisplayDetailList] = useState([]);
 
   const getCurrentRSVP = () => {
     const res = {
@@ -101,7 +103,91 @@ const Me = () => {
       },
       {
         name: "test-rsvp-name3",
-        startDateAndTime: "2024-08-18 09:00",
+        startDateAndTime: "2024-08-17 09:00",
+        endDateAndTime: "2024-08-18 18:00",
+        location: "online",
+        options: ["참가", "불참", "미정"],
+        deadline: "2024-08-17 17:00",
+        description: "testsetsetsetse",
+        response: [
+          {
+            option: "참가",
+            number: 4,
+            names: [
+              { name: "홍길동" },
+              { name: "아무개" },
+              { name: "이순신", reply: "나를 따르라" },
+              { name: "강감찬" },
+            ],
+          },
+          {
+            option: "불참",
+            number: 1,
+            names: [{ name: "김개똥", reply: "미안" }],
+          },
+          { option: "미정", number: 0, names: [] },
+        ],
+        link: "http://localhost:3000/rsvp/123",
+      },
+      {
+        name: "test-rsvp-name4",
+        startDateAndTime: "2024-08-17 09:00",
+        endDateAndTime: "2024-08-18 18:00",
+        location: "online",
+        options: ["참가", "불참", "미정"],
+        deadline: "2024-08-17 17:00",
+        description: "testsetsetsetse",
+        response: [
+          {
+            option: "참가",
+            number: 4,
+            names: [
+              { name: "홍길동" },
+              { name: "아무개" },
+              { name: "이순신", reply: "나를 따르라" },
+              { name: "강감찬" },
+            ],
+          },
+          {
+            option: "불참",
+            number: 1,
+            names: [{ name: "김개똥", reply: "미안" }],
+          },
+          { option: "미정", number: 0, names: [] },
+        ],
+        link: "http://localhost:3000/rsvp/123",
+      },
+      {
+        name: "test-rsvp-name5",
+        startDateAndTime: "2024-08-17 09:00",
+        endDateAndTime: "2024-08-18 18:00",
+        location: "online",
+        options: ["참가", "불참", "미정"],
+        deadline: "2024-08-17 17:00",
+        description: "testsetsetsetse",
+        response: [
+          {
+            option: "참가",
+            number: 4,
+            names: [
+              { name: "홍길동" },
+              { name: "아무개" },
+              { name: "이순신", reply: "나를 따르라" },
+              { name: "강감찬" },
+            ],
+          },
+          {
+            option: "불참",
+            number: 1,
+            names: [{ name: "김개똥", reply: "미안" }],
+          },
+          { option: "미정", number: 0, names: [] },
+        ],
+        link: "http://localhost:3000/rsvp/123",
+      },
+      {
+        name: "test-rsvp-name6",
+        startDateAndTime: "2024-08-17 09:00",
         endDateAndTime: "2024-08-18 18:00",
         location: "online",
         options: ["참가", "불참", "미정"],
@@ -129,7 +215,100 @@ const Me = () => {
       },
     ];
 
-    setHistory(res);
+    var res2 = [
+      {
+        name: "test-rsvp-name7",
+        startDateAndTime: "2024-08-17 09:00",
+        endDateAndTime: "2024-08-18 18:00",
+        location: "online",
+        options: ["참가", "불참", "미정"],
+        deadline: "2024-08-17 17:00",
+        description: "testsetsetsetse",
+        response: [
+          {
+            option: "참가",
+            number: 4,
+            names: [
+              { name: "홍길동" },
+              { name: "아무개" },
+              { name: "이순신", reply: "나를 따르라" },
+              { name: "강감찬" },
+            ],
+          },
+          {
+            option: "불참",
+            number: 1,
+            names: [{ name: "김개똥", reply: "미안" }],
+          },
+          { option: "미정", number: 0, names: [] },
+        ],
+        link: "http://localhost:3000/rsvp/123",
+      },
+      {
+        name: "test-rsvp-name8",
+        startDateAndTime: "2024-08-17 09:00",
+        endDateAndTime: "2024-08-18 18:00",
+        location: "online",
+        options: ["참가", "불참", "미정"],
+        deadline: "2024-08-17 17:00",
+        description: "testsetsetsetse",
+        response: [
+          {
+            option: "참가",
+            number: 4,
+            names: [
+              { name: "홍길동" },
+              { name: "아무개" },
+              { name: "이순신", reply: "나를 따르라" },
+              { name: "강감찬" },
+            ],
+          },
+          {
+            option: "불참",
+            number: 1,
+            names: [{ name: "김개똥", reply: "미안" }],
+          },
+          { option: "미정", number: 0, names: [] },
+        ],
+        link: "http://localhost:3000/rsvp/123",
+      },
+      {
+        name: "test-rsvp-name9",
+        startDateAndTime: "2024-08-17 09:00",
+        endDateAndTime: "2024-08-18 18:00",
+        location: "online",
+        options: ["참가", "불참", "미정"],
+        deadline: "2024-08-17 17:00",
+        description: "testsetsetsetse",
+        response: [
+          {
+            option: "참가",
+            number: 4,
+            names: [
+              { name: "홍길동" },
+              { name: "아무개" },
+              { name: "이순신", reply: "나를 따르라" },
+              { name: "강감찬" },
+            ],
+          },
+          {
+            option: "불참",
+            number: 1,
+            names: [{ name: "김개똥", reply: "미안" }],
+          },
+          { option: "미정", number: 0, names: [] },
+        ],
+        link: "http://localhost:3000/rsvp/123",
+      },
+    ];
+
+    if (int == 0) {
+      setHistory(res);
+      setInt(1);
+    } else {
+      setHistory([...history, ...res2]);
+    }
+
     setHistoryLoading(false);
   };
 
@@ -158,6 +337,25 @@ const Me = () => {
 
   const toggleCurrentAndHistory = () => {
     setShowHistory(!showHistory);
+  };
+
+  const collapseHistoryDetail = (e) => {
+    const val = e.target.innerText;
+
+    setDisplayDetailList([...displayDetailList, val]);
+
+    const isExist = displayDetailList.find((element) => {
+      return element == val;
+    });
+
+    if (isExist) {
+      const newList = displayDetailList.filter((item) => item !== val);
+      setDisplayDetailList(newList);
+    } else {
+      setDisplayDetailList([...displayDetailList, val]);
+    }
+
+    console.log(val, displayDetailList);
   };
 
   useEffect(() => {
@@ -288,7 +486,7 @@ const Me = () => {
             <InfiniteScroll
               dataLength={history.length}
               next={getHistoryRSVP}
-              hasMore={history.length < 2}
+              hasMore={history.length < 8}
               loader={
                 <Skeleton
                   paragraph={{
@@ -303,13 +501,49 @@ const Me = () => {
               <List
                 dataSource={history}
                 renderItem={(item) => (
-                  <List.Item key={item.name}>
-                    <List.Item.Meta
-                      title={<a href="#">{item.name}</a>}
-                      description={item.name}
-                    />
-                    <div>Content</div>
-                  </List.Item>
+                  <>
+                    <List.Item key={item.name} onClick={collapseHistoryDetail}>
+                      <List.Item.Meta
+                        title={<p>{item.name}</p>}
+                        description={item.description}
+                      />
+                      <div>
+                        {item.location} / {item.startDateAndTime} ~{" "}
+                        {item.endDateAndTime}
+                      </div>
+                    </List.Item>
+                    {displayDetailList.length > 0 &&
+                      displayDetailList.find((el) => {
+                        return el == item.name;
+                      }) && (
+                        <div key={item.name + "detail"} id={item.name}>
+                          {item.response.map((el) => (
+                            <p>
+                              {el.option}({el.number})
+                              {el.names.length > 0 && (
+                                <ul style={{ marginLeft: "20px" }}>
+                                  {el.names.map((val) => (
+                                    <li>
+                                      {val.name}{" "}
+                                      {val.reply && (
+                                        <Popover
+                                          content={val.reply}
+                                          title="추신"
+                                          trigger="click"
+                                          placement="topLeft"
+                                        >
+                                          <MailOutlined />
+                                        </Popover>
+                                      )}
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                  </>
                 )}
               />
             </InfiniteScroll>
