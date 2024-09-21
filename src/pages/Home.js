@@ -1,6 +1,16 @@
-import React, { useState } from "react";
-import { Layout, Form, Input, Button, Modal, Select, DatePicker } from "antd";
+import React, { useState, useEffect } from "react";
+import {
+  Layout,
+  Form,
+  Input,
+  Button,
+  Modal,
+  Select,
+  DatePicker,
+  message,
+} from "antd";
 import ActionResult from "../components/ActionResult";
+import store from "../redux/Store.ts";
 
 const { Content } = Layout;
 
@@ -8,6 +18,11 @@ const Home = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [result, setResult] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const info = () => {
+    messageApi.info("로그인하여주세요");
+  };
 
   const options = [
     {
@@ -24,8 +39,23 @@ const Home = () => {
     },
   ];
 
+  useEffect(() => {
+    if (store.getState().login.token) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [isLoggedIn]);
+
   const showModal = () => {
-    setIsModalVisible(true);
+    if (isLoggedIn) {
+      setIsModalVisible(true);
+    } else {
+      info();
+      // login();
+      // setIsLoggedIn(true);
+      // setIsModalVisible(true);
+    }
   };
 
   const closeModal = () => {
@@ -55,6 +85,7 @@ const Home = () => {
 
   return (
     <Content style={{ padding: "48px 48px" }}>
+      {contextHolder}
       <Button type="primary" onClick={showModal}>
         새로운 RSVP 만들기
       </Button>

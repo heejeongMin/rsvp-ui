@@ -8,9 +8,15 @@ import {
   Popover,
   Skeleton,
   List,
+  Result,
 } from "antd";
 import InfiniteScroll from "https://esm.sh/react-infinite-scroll-component";
-import { ExclamationCircleFilled, MailOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleFilled,
+  MailOutlined,
+  LoginOutlined,
+} from "@ant-design/icons";
+import store from "../redux/Store.ts";
 
 const { confirm } = Modal;
 
@@ -23,6 +29,7 @@ const Me = () => {
   const [history, setHistory] = useState();
   const [int, setInt] = useState(0); //test property
   const [displayDetailList, setDisplayDetailList] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const getCurrentRSVP = () => {
     const res = {
@@ -302,7 +309,7 @@ const Me = () => {
       },
     ];
 
-    if (int == 0) {
+    if (int === 0) {
       setHistory(res);
       setInt(1);
     } else {
@@ -345,7 +352,7 @@ const Me = () => {
     setDisplayDetailList([...displayDetailList, val]);
 
     const isExist = displayDetailList.find((element) => {
-      return element == val;
+      return element === val;
     });
 
     if (isExist) {
@@ -362,7 +369,12 @@ const Me = () => {
     getCurrentRSVP();
     getHistoryRSVP();
     setPageLoading(false);
-  }, []);
+    if (store.getState().login.token) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [isLoggedIn]);
 
   if (pageLoading) {
     return <div>Loading...</div>;
@@ -377,179 +389,190 @@ const Me = () => {
         padding: "48px 48px",
       }}
     >
-      <Card
-        title="RSVP"
-        extra={
-          <a onClick={toggleCurrentAndHistory}>
-            {!showHistory && "지난 RSVP 보기"}
-            {showHistory && "현재 RSVP 보기"}
-          </a>
-        }
-      >
-        {!currentRSVP && <p>현재 진행중인 RSVP가 없습니다</p>}
-        {currentRSVP && !showHistory && (
-          <Card
-            type="inner"
-            title={currentRSVP.name}
-            extra={<Button onClick={showModal}>RSVP 종료하기</Button>}
-          >
-            <div>
-              <p>총 회신 수 : {totalNumber}</p>
-            </div>
-            {currentRSVP.response.map((el) => (
-              <p>
-                {el.option}({el.number})
-                {el.names.length > 0 && (
-                  <ul style={{ marginLeft: "20px" }}>
-                    {el.names.map((val) => (
-                      <li>
-                        {val.name}{" "}
-                        {val.reply && (
-                          <Popover
-                            content={val.reply}
-                            title="추신"
-                            trigger="click"
-                            placement="topLeft"
-                          >
-                            <MailOutlined />
-                          </Popover>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </p>
-            ))}
-            <Divider>RSVP 내역</Divider>
-            <div>
-              <p>
-                <b>RSVP 링크</b>
-              </p>
-              <p>{currentRSVP.link}</p>
-            </div>
-            <div>
-              <p>
-                <b>시작 일시</b>
-              </p>
-              <p>{currentRSVP.startDateAndTime}</p>
-            </div>
-            <div>
-              <p>
-                <b>종료 일시</b>
-              </p>
-              <p>{currentRSVP.endDateAndTime}</p>
-            </div>
-            <div>
-              <p>
-                <b>모임 장소</b>
-              </p>
-              <p>{currentRSVP.location}</p>
-            </div>
-            <div>
-              <p>
-                <b>회신 옵션</b>
-              </p>
-              <p>
-                {currentRSVP.options.map((el) => (
-                  <span>{el} </span>
-                ))}
-              </p>
-            </div>
-            {currentRSVP.description && (
-              <div>
-                <p>
-                  <b>모임 내용</b>
-                </p>
-                <p>{currentRSVP.description}</p>
-              </div>
-            )}
-            {currentRSVP.deadline && (
-              <div>
-                <p>
-                  <b>회신 기한</b>
-                </p>
-                <p>{currentRSVP.deadline}</p>
-              </div>
-            )}
-          </Card>
-        )}
-        {showHistory && (
-          <div
-            id="scrollableDiv"
-            style={{
-              height: 400,
-              overflow: "auto",
-              padding: "0 16px",
-              border: "1px solid rgba(140, 140, 140, 0.35)",
-            }}
-          >
-            <InfiniteScroll
-              dataLength={history.length}
-              next={getHistoryRSVP}
-              hasMore={history.length < 8}
-              loader={
-                <Skeleton
-                  paragraph={{
-                    rows: 2,
-                  }}
-                  active
-                />
-              }
-              endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
-              scrollableTarget="scrollableDiv"
+      {!isLoggedIn && (
+        <Result
+          icon={<LoginOutlined />}
+          title="빠른 로그인으로 RSVP를 관리해보세요!"
+        />
+      )}
+      {isLoggedIn && (
+        <Card
+          title="RSVP"
+          extra={
+            <a onClick={toggleCurrentAndHistory}>
+              {!showHistory && "지난 RSVP 보기"}
+              {showHistory && "현재 RSVP 보기"}
+            </a>
+          }
+        >
+          {!currentRSVP && <p>현재 진행중인 RSVP가 없습니다</p>}
+          {currentRSVP && !showHistory && (
+            <Card
+              type="inner"
+              title={currentRSVP.name}
+              extra={<Button onClick={showModal}>RSVP 종료하기</Button>}
             >
-              <List
-                dataSource={history}
-                renderItem={(item) => (
-                  <>
-                    <List.Item key={item.name} onClick={collapseHistoryDetail}>
-                      <List.Item.Meta
-                        title={<p>{item.name}</p>}
-                        description={item.description}
-                      />
-                      <div>
-                        {item.location} / {item.startDateAndTime} ~{" "}
-                        {item.endDateAndTime}
-                      </div>
-                    </List.Item>
-                    {displayDetailList.length > 0 &&
-                      displayDetailList.find((el) => {
-                        return el == item.name;
-                      }) && (
-                        <div key={item.name + "detail"} id={item.name}>
-                          {item.response.map((el) => (
-                            <p>
-                              {el.option}({el.number})
-                              {el.names.length > 0 && (
-                                <ul style={{ marginLeft: "20px" }}>
-                                  {el.names.map((val) => (
-                                    <li>
-                                      {val.name}{" "}
-                                      {val.reply && (
-                                        <Popover
-                                          content={val.reply}
-                                          title="추신"
-                                          trigger="click"
-                                          placement="topLeft"
-                                        >
-                                          <MailOutlined />
-                                        </Popover>
-                                      )}
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
-                            </p>
-                          ))}
+              <div>
+                <p>총 회신 수 : {totalNumber}</p>
+              </div>
+              {currentRSVP.response.map((el) => (
+                <p>
+                  {el.option}({el.number})
+                  {el.names.length > 0 && (
+                    <ul style={{ marginLeft: "20px" }}>
+                      {el.names.map((val) => (
+                        <li>
+                          {val.name}{" "}
+                          {val.reply && (
+                            <Popover
+                              content={val.reply}
+                              title="추신"
+                              trigger="click"
+                              placement="topLeft"
+                            >
+                              <MailOutlined />
+                            </Popover>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </p>
+              ))}
+              <Divider>RSVP 내역</Divider>
+              <div>
+                <p>
+                  <b>RSVP 링크</b>
+                </p>
+                <p>{currentRSVP.link}</p>
+              </div>
+              <div>
+                <p>
+                  <b>시작 일시</b>
+                </p>
+                <p>{currentRSVP.startDateAndTime}</p>
+              </div>
+              <div>
+                <p>
+                  <b>종료 일시</b>
+                </p>
+                <p>{currentRSVP.endDateAndTime}</p>
+              </div>
+              <div>
+                <p>
+                  <b>모임 장소</b>
+                </p>
+                <p>{currentRSVP.location}</p>
+              </div>
+              <div>
+                <p>
+                  <b>회신 옵션</b>
+                </p>
+                <p>
+                  {currentRSVP.options.map((el) => (
+                    <span>{el} </span>
+                  ))}
+                </p>
+              </div>
+              {currentRSVP.description && (
+                <div>
+                  <p>
+                    <b>모임 내용</b>
+                  </p>
+                  <p>{currentRSVP.description}</p>
+                </div>
+              )}
+              {currentRSVP.deadline && (
+                <div>
+                  <p>
+                    <b>회신 기한</b>
+                  </p>
+                  <p>{currentRSVP.deadline}</p>
+                </div>
+              )}
+            </Card>
+          )}
+          {showHistory && (
+            <div
+              id="scrollableDiv"
+              style={{
+                height: 400,
+                overflow: "auto",
+                padding: "0 16px",
+                border: "1px solid rgba(140, 140, 140, 0.35)",
+              }}
+            >
+              <InfiniteScroll
+                dataLength={history.length}
+                next={getHistoryRSVP}
+                hasMore={history.length < 8}
+                loader={
+                  <Skeleton
+                    paragraph={{
+                      rows: 2,
+                    }}
+                    active
+                  />
+                }
+                endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
+                scrollableTarget="scrollableDiv"
+              >
+                <List
+                  dataSource={history}
+                  renderItem={(item) => (
+                    <>
+                      <List.Item
+                        key={item.name}
+                        onClick={collapseHistoryDetail}
+                      >
+                        <List.Item.Meta
+                          title={<p>{item.name}</p>}
+                          description={item.description}
+                        />
+                        <div>
+                          {item.location} / {item.startDateAndTime} ~{" "}
+                          {item.endDateAndTime}
                         </div>
-                      )}
-                  </>
-                )}
-              />
-            </InfiniteScroll>
-          </div>
-        )}
-      </Card>
+                      </List.Item>
+                      {displayDetailList.length > 0 &&
+                        displayDetailList.find((el) => {
+                          return el === item.name;
+                        }) && (
+                          <div key={item.name + "detail"} id={item.name}>
+                            {item.response.map((el) => (
+                              <p>
+                                {el.option}({el.number})
+                                {el.names.length > 0 && (
+                                  <ul style={{ marginLeft: "20px" }}>
+                                    {el.names.map((val) => (
+                                      <li>
+                                        {val.name}{" "}
+                                        {val.reply && (
+                                          <Popover
+                                            content={val.reply}
+                                            title="추신"
+                                            trigger="click"
+                                            placement="topLeft"
+                                          >
+                                            <MailOutlined />
+                                          </Popover>
+                                        )}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                    </>
+                  )}
+                />
+              </InfiniteScroll>
+            </div>
+          )}
+        </Card>
+      )}
     </Space>
   );
 };

@@ -4,15 +4,19 @@ import emailjs from "@emailjs/browser";
 import ActionResult from "../components/ActionResult";
 
 const { Content } = Layout;
+const EMAIL_JS_KEY = process.env.REACT_APP_EMAIL_JS_PUBLIC_KEY;
+const EMAIL_JS_SERVICE_ID = process.env.REACT_APP_EMAIL_JS_SERVICE_ID;
+const EMAIL_JS_TEMPLATE_ID = process.env.REACT_APP_EMAIL_JS_TEMPLATE_ID;
+const EMAIL_JS_TO_NAME = process.env.REACT_APP_EMAIL_JS_TO_NAME;
+const EMAIL_JS_APP_NAME = process.env.REACT_APP_EMAIL_JS_APP_NAME;
+const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URL;
 
 const Contact = () => {
-  useEffect(() => emailjs.init("cv09W9A2y5bpv1mbu"), []);
   const [emailSent, setEmailSent] = useState(0);
-
+  const [loading, setLoading] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-
   const formItemLayout = {
     labelCol: {
       xs: {
@@ -32,23 +36,20 @@ const Contact = () => {
     },
   };
 
-  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    emailjs.init(`${EMAIL_JS_KEY}`);
+  }, []);
 
   const handleSubmit = (values) => {
-    const serviceId = "service_fylo0u5";
-    const templateId = "template_1k43xxj";
-    const toName = "heejeong";
-    const appName = "rsvp";
-
     try {
       setLoading(true);
       var result = 1;
 
       emailjs
-        .send(serviceId, templateId, {
-          to_name: toName,
+        .send(`${EMAIL_JS_SERVICE_ID}`, `${EMAIL_JS_TEMPLATE_ID}`, {
+          to_name: `${EMAIL_JS_TO_NAME}`,
           from_name: values.name,
-          app_name: appName,
+          app_name: `${EMAIL_JS_APP_NAME}`,
           reply_to: values.email,
           message: values.message,
         })
@@ -70,7 +71,7 @@ const Contact = () => {
     return (
       <ActionResult
         result="success"
-        title="개발자에게 이메일을 전송하였습니다."
+        title="이메일을 전송하였습니다."
         message="작성하신 이메일로 회신을 하도록 하겠습니다."
       />
     );
@@ -78,7 +79,7 @@ const Contact = () => {
     return (
       <ActionResult
         result="error"
-        title="개발자에게 이메일 전송에 실패하였습니다."
+        title="이메일 전송에 실패하였습니다."
         message="다시 시도해주세요. 계속 실패 시 앱스토어로 연락부탁드립니다."
       />
     );

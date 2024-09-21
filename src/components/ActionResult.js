@@ -17,13 +17,13 @@ const ActionResult = (props) => {
   useEffect(() => {
     setSubtitle(message);
     setLoading(false);
-  }, []);
+  }, [message]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (directToMe == "true") {
+  if (directToMe === "true") {
     return (
       <Result
         status={result}

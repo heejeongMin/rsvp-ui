@@ -11,38 +11,49 @@ import Home from "./pages/Home";
 import Me from "./pages/Me";
 import RSVPForm from "./pages/RSVPForm";
 import Contact from "./pages/Contact";
+import Login from "./pages/Login";
 import "./App.css";
 import ActionResult from "./components/ActionResult";
+import { createStore } from "redux";
+import { Provider } from "react-redux";
+import { rootReducer } from "./redux/Store.ts";
 
 const Layout = ({ children }) => {
   const location = useLocation();
 
   // Define routes where the header should be hidden
-  const hideTopNavPath = "rsvp";
+  const hideTopNavPath = ["rsvp", "login"];
 
   return (
     <>
-      {location.pathname.indexOf(hideTopNavPath) < 0 && <TopNav />}
+      {!hideTopNavPath.find((it) => location.pathname.indexOf(it) > 0) && (
+        <TopNav />
+      )}
       <main>{children}</main>
     </>
   );
 };
 
 const App = () => {
+  const store = createStore(rootReducer);
+
   return (
-    <Router>
-      <Layout>
-        <div className="content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/me" element={<Me />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/rsvp/:id" element={<RSVPForm />} />
-            <Route path="/result" element={<ActionResult />} />
-          </Routes>
-        </div>
-      </Layout>
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <Layout>
+          <div className="content">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/me" element={<Me />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/rsvp/:id" element={<RSVPForm />} />
+              <Route path="/result" element={<ActionResult />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </div>
+        </Layout>
+      </Router>
+    </Provider>
   );
 };
 
