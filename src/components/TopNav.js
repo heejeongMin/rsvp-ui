@@ -4,16 +4,14 @@ import { HomeOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
 import "antd/dist/reset.css"; // Import Ant Design styles by default
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import store from "../redux/Store.ts";
 import { login, logout } from "../services/Auth";
 import kakaoLogin from "../resources/kakao_login_small.png";
-import { useNavigate } from "react-router-dom";
+import { isUserLoggedIn } from "../redux/StoreHelper.ts";
 
 const { Header } = Layout;
 
 const TopNav = () => {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const pathname = location.pathname;
 
@@ -50,13 +48,13 @@ const TopNav = () => {
 
   useEffect(() => {
     pathToKeyChange();
-    setLoading(false);
 
-    if (store.getState().login.token) {
+    if (isUserLoggedIn()) {
       setLoginTxt("logout");
     } else {
       setLoginTxt("login");
     }
+    setLoading(false);
   }, [location.state, activeKey, loginTxt]);
 
   if (loading) {
@@ -83,7 +81,7 @@ const TopNav = () => {
           <Menu.Item key="contact" icon={<MailOutlined />}>
             <Link to="/contact">Contact</Link>
           </Menu.Item>
-          <Menu.Item key="logout" style={{ marginLeft: "auto" }}>
+          <Menu.Item key="loginLogout" style={{ marginLeft: "auto" }}>
             {loginTxt === "login" && (
               <Popover
                 content={

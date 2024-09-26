@@ -10,7 +10,8 @@ import {
   message,
 } from "antd";
 import ActionResult from "../components/ActionResult";
-import store from "../redux/Store.ts";
+import createRSVP from "../services/RsvpAdapter.ts";
+import { isUserLoggedIn } from "../redux/StoreHelper.ts";
 
 const { Content } = Layout;
 
@@ -40,11 +41,7 @@ const Home = () => {
   ];
 
   useEffect(() => {
-    if (store.getState().login.token) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
+    setIsLoggedIn(isUserLoggedIn());
   }, [isLoggedIn]);
 
   const showModal = () => {
@@ -52,9 +49,6 @@ const Home = () => {
       setIsModalVisible(true);
     } else {
       info();
-      // login();
-      // setIsLoggedIn(true);
-      // setIsModalVisible(true);
     }
   };
 
@@ -64,6 +58,7 @@ const Home = () => {
   };
 
   const handleOk = () => {
+    createRSVP(form);
     //call backend
     closeModal();
     setResult(true);

@@ -9,7 +9,6 @@ const EMAIL_JS_SERVICE_ID = process.env.REACT_APP_EMAIL_JS_SERVICE_ID;
 const EMAIL_JS_TEMPLATE_ID = process.env.REACT_APP_EMAIL_JS_TEMPLATE_ID;
 const EMAIL_JS_TO_NAME = process.env.REACT_APP_EMAIL_JS_TO_NAME;
 const EMAIL_JS_APP_NAME = process.env.REACT_APP_EMAIL_JS_APP_NAME;
-const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URL;
 
 const Contact = () => {
   const [emailSent, setEmailSent] = useState(0);

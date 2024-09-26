@@ -16,310 +16,52 @@ import {
   MailOutlined,
   LoginOutlined,
 } from "@ant-design/icons";
-import store from "../redux/Store.ts";
+import {
+  getActiveRSVPApi,
+  closeRSVPApi,
+  getHistoryRSVPApi,
+} from "../services/RsvpAdapter.ts";
+import { convertOption } from "../models/res/GetRSVPResponse.ts";
+import { isUserLoggedIn } from "../redux/StoreHelper.ts";
+import convertToLocalDateTime from "../util/DateTImeConverter.ts";
 
 const { confirm } = Modal;
 
 const Me = () => {
   const [pageLoading, setPageLoading] = useState(true);
-  const [currentRSVP, setCurrentRSVP] = useState();
-  const [totalNumber, setTotalNumber] = useState(0);
+  const [currentRSVP, setCurrentRSVP] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
-  const [historyLoading, setHistoryLoading] = useState(false);
-  const [history, setHistory] = useState();
-  const [int, setInt] = useState(0); //test property
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [history, setHistory] = useState([]);
+  const [historyPage, setHistoryPage] = useState(0);
+  const [historyTotal, setHistoryTotal] = useState(0);
   const [displayDetailList, setDisplayDetailList] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const getCurrentRSVP = () => {
-    const res = {
-      name: "test-rsvp-name",
-      startDateAndTime: "2024-08-18 09:00",
-      endDateAndTime: "2024-08-18 18:00",
-      location: "online",
-      options: ["참가", "불참", "미정"],
-      deadline: "2024-08-17 17:00",
-      description: "testsetsetsetse",
-      response: [
-        {
-          option: "참가",
-          number: 4,
-          names: [
-            { name: "홍길동" },
-            { name: "아무개" },
-            { name: "이순신", reply: "나를 따르라" },
-            { name: "강감찬" },
-          ],
-        },
-        {
-          option: "불참",
-          number: 1,
-          names: [{ name: "김개똥", reply: "미안" }],
-        },
-        { option: "미정", number: 0, names: [] },
-      ],
-      link: "http://localhost:3000/rsvp/123",
-    };
-
-    let num = 0;
-
-    res.response.map((el) => {
-      num = num + el.number;
+  const getCurrentRSVP = async () => {
+    getActiveRSVPApi().then((res) => {
+      setCurrentRSVP(res.rsvp);
     });
-
-    setCurrentRSVP(res);
-    setTotalNumber(num);
   };
 
   const getHistoryRSVP = () => {
-    if (historyLoading) {
+    if (!historyLoading) {
       return;
     }
 
-    setHistoryLoading(true);
+    getHistoryRSVPApi(historyPage).then((res) => {
+      setHistory([...history, ...res.responses]);
+      setHistoryTotal(res.pageInfo.totalElements);
+      setHistoryTotal(res.pageInfo.totalElements);
+      if (!res.pageInfo.isLast) {
+        setHistoryPage(historyPage + 1);
+      }
 
-    //callbackend
-    const res = [
-      {
-        name: "test-rsvp-name2",
-        startDateAndTime: "2024-08-18 09:00",
-        endDateAndTime: "2024-08-18 18:00",
-        location: "online",
-        options: ["참가", "불참", "미정"],
-        deadline: "2024-08-17 17:00",
-        description: "testsetsetsetse",
-        response: [
-          {
-            option: "참가",
-            number: 4,
-            names: [
-              { name: "홍길동" },
-              { name: "아무개" },
-              { name: "이순신", reply: "나를 따르라" },
-              { name: "강감찬" },
-            ],
-          },
-          {
-            option: "불참",
-            number: 1,
-            names: [{ name: "김개똥", reply: "미안" }],
-          },
-          { option: "미정", number: 0, names: [] },
-        ],
-        link: "http://localhost:3000/rsvp/123",
-      },
-      {
-        name: "test-rsvp-name3",
-        startDateAndTime: "2024-08-17 09:00",
-        endDateAndTime: "2024-08-18 18:00",
-        location: "online",
-        options: ["참가", "불참", "미정"],
-        deadline: "2024-08-17 17:00",
-        description: "testsetsetsetse",
-        response: [
-          {
-            option: "참가",
-            number: 4,
-            names: [
-              { name: "홍길동" },
-              { name: "아무개" },
-              { name: "이순신", reply: "나를 따르라" },
-              { name: "강감찬" },
-            ],
-          },
-          {
-            option: "불참",
-            number: 1,
-            names: [{ name: "김개똥", reply: "미안" }],
-          },
-          { option: "미정", number: 0, names: [] },
-        ],
-        link: "http://localhost:3000/rsvp/123",
-      },
-      {
-        name: "test-rsvp-name4",
-        startDateAndTime: "2024-08-17 09:00",
-        endDateAndTime: "2024-08-18 18:00",
-        location: "online",
-        options: ["참가", "불참", "미정"],
-        deadline: "2024-08-17 17:00",
-        description: "testsetsetsetse",
-        response: [
-          {
-            option: "참가",
-            number: 4,
-            names: [
-              { name: "홍길동" },
-              { name: "아무개" },
-              { name: "이순신", reply: "나를 따르라" },
-              { name: "강감찬" },
-            ],
-          },
-          {
-            option: "불참",
-            number: 1,
-            names: [{ name: "김개똥", reply: "미안" }],
-          },
-          { option: "미정", number: 0, names: [] },
-        ],
-        link: "http://localhost:3000/rsvp/123",
-      },
-      {
-        name: "test-rsvp-name5",
-        startDateAndTime: "2024-08-17 09:00",
-        endDateAndTime: "2024-08-18 18:00",
-        location: "online",
-        options: ["참가", "불참", "미정"],
-        deadline: "2024-08-17 17:00",
-        description: "testsetsetsetse",
-        response: [
-          {
-            option: "참가",
-            number: 4,
-            names: [
-              { name: "홍길동" },
-              { name: "아무개" },
-              { name: "이순신", reply: "나를 따르라" },
-              { name: "강감찬" },
-            ],
-          },
-          {
-            option: "불참",
-            number: 1,
-            names: [{ name: "김개똥", reply: "미안" }],
-          },
-          { option: "미정", number: 0, names: [] },
-        ],
-        link: "http://localhost:3000/rsvp/123",
-      },
-      {
-        name: "test-rsvp-name6",
-        startDateAndTime: "2024-08-17 09:00",
-        endDateAndTime: "2024-08-18 18:00",
-        location: "online",
-        options: ["참가", "불참", "미정"],
-        deadline: "2024-08-17 17:00",
-        description: "testsetsetsetse",
-        response: [
-          {
-            option: "참가",
-            number: 4,
-            names: [
-              { name: "홍길동" },
-              { name: "아무개" },
-              { name: "이순신", reply: "나를 따르라" },
-              { name: "강감찬" },
-            ],
-          },
-          {
-            option: "불참",
-            number: 1,
-            names: [{ name: "김개똥", reply: "미안" }],
-          },
-          { option: "미정", number: 0, names: [] },
-        ],
-        link: "http://localhost:3000/rsvp/123",
-      },
-    ];
-
-    var res2 = [
-      {
-        name: "test-rsvp-name7",
-        startDateAndTime: "2024-08-17 09:00",
-        endDateAndTime: "2024-08-18 18:00",
-        location: "online",
-        options: ["참가", "불참", "미정"],
-        deadline: "2024-08-17 17:00",
-        description: "testsetsetsetse",
-        response: [
-          {
-            option: "참가",
-            number: 4,
-            names: [
-              { name: "홍길동" },
-              { name: "아무개" },
-              { name: "이순신", reply: "나를 따르라" },
-              { name: "강감찬" },
-            ],
-          },
-          {
-            option: "불참",
-            number: 1,
-            names: [{ name: "김개똥", reply: "미안" }],
-          },
-          { option: "미정", number: 0, names: [] },
-        ],
-        link: "http://localhost:3000/rsvp/123",
-      },
-      {
-        name: "test-rsvp-name8",
-        startDateAndTime: "2024-08-17 09:00",
-        endDateAndTime: "2024-08-18 18:00",
-        location: "online",
-        options: ["참가", "불참", "미정"],
-        deadline: "2024-08-17 17:00",
-        description: "testsetsetsetse",
-        response: [
-          {
-            option: "참가",
-            number: 4,
-            names: [
-              { name: "홍길동" },
-              { name: "아무개" },
-              { name: "이순신", reply: "나를 따르라" },
-              { name: "강감찬" },
-            ],
-          },
-          {
-            option: "불참",
-            number: 1,
-            names: [{ name: "김개똥", reply: "미안" }],
-          },
-          { option: "미정", number: 0, names: [] },
-        ],
-        link: "http://localhost:3000/rsvp/123",
-      },
-      {
-        name: "test-rsvp-name9",
-        startDateAndTime: "2024-08-17 09:00",
-        endDateAndTime: "2024-08-18 18:00",
-        location: "online",
-        options: ["참가", "불참", "미정"],
-        deadline: "2024-08-17 17:00",
-        description: "testsetsetsetse",
-        response: [
-          {
-            option: "참가",
-            number: 4,
-            names: [
-              { name: "홍길동" },
-              { name: "아무개" },
-              { name: "이순신", reply: "나를 따르라" },
-              { name: "강감찬" },
-            ],
-          },
-          {
-            option: "불참",
-            number: 1,
-            names: [{ name: "김개똥", reply: "미안" }],
-          },
-          { option: "미정", number: 0, names: [] },
-        ],
-        link: "http://localhost:3000/rsvp/123",
-      },
-    ];
-
-    if (int === 0) {
-      setHistory(res);
-      setInt(1);
-    } else {
-      setHistory([...history, ...res2]);
-    }
-
-    setHistoryLoading(false);
+      setHistoryLoading(!res.pageInfo.isLast);
+    });
   };
 
-  const showModal = () => {
+  const showModal = (link) => {
     confirm({
       title: "아직 RSVP가 진행중입니다.",
       icon: <ExclamationCircleFilled />,
@@ -331,15 +73,14 @@ const Me = () => {
       },
       cancelText: "취소",
       onOk() {
-        closeRSVP();
+        closeRSVPApi(link).then((res) => {
+          if (res === "success") {
+            window.location.reload();
+          }
+        });
       },
       onCancel() {},
     });
-  };
-
-  const closeRSVP = () => {
-    setCurrentRSVP();
-    setTotalNumber(0);
   };
 
   const toggleCurrentAndHistory = () => {
@@ -361,20 +102,19 @@ const Me = () => {
     } else {
       setDisplayDetailList([...displayDetailList, val]);
     }
-
-    console.log(val, displayDetailList);
   };
 
   useEffect(() => {
-    getCurrentRSVP();
-    getHistoryRSVP();
-    setPageLoading(false);
-    if (store.getState().login.token) {
+    if (isUserLoggedIn()) {
       setIsLoggedIn(true);
+      getCurrentRSVP();
+      getHistoryRSVP();
     } else {
       setIsLoggedIn(false);
     }
-  }, [isLoggedIn]);
+
+    setPageLoading(false);
+  }, []);
 
   if (pageLoading) {
     return <div>Loading...</div>;
@@ -405,93 +145,111 @@ const Me = () => {
             </a>
           }
         >
-          {!currentRSVP && <p>현재 진행중인 RSVP가 없습니다</p>}
-          {currentRSVP && !showHistory && (
-            <Card
-              type="inner"
-              title={currentRSVP.name}
-              extra={<Button onClick={showModal}>RSVP 종료하기</Button>}
-            >
-              <div>
-                <p>총 회신 수 : {totalNumber}</p>
-              </div>
-              {currentRSVP.response.map((el) => (
-                <p>
-                  {el.option}({el.number})
-                  {el.names.length > 0 && (
-                    <ul style={{ marginLeft: "20px" }}>
-                      {el.names.map((val) => (
-                        <li>
-                          {val.name}{" "}
-                          {val.reply && (
-                            <Popover
-                              content={val.reply}
-                              title="추신"
-                              trigger="click"
-                              placement="topLeft"
-                            >
-                              <MailOutlined />
-                            </Popover>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </p>
-              ))}
-              <Divider>RSVP 내역</Divider>
-              <div>
-                <p>
-                  <b>RSVP 링크</b>
-                </p>
-                <p>{currentRSVP.link}</p>
-              </div>
-              <div>
-                <p>
-                  <b>시작 일시</b>
-                </p>
-                <p>{currentRSVP.startDateAndTime}</p>
-              </div>
-              <div>
-                <p>
-                  <b>종료 일시</b>
-                </p>
-                <p>{currentRSVP.endDateAndTime}</p>
-              </div>
-              <div>
-                <p>
-                  <b>모임 장소</b>
-                </p>
-                <p>{currentRSVP.location}</p>
-              </div>
-              <div>
-                <p>
-                  <b>회신 옵션</b>
-                </p>
-                <p>
-                  {currentRSVP.options.map((el) => (
-                    <span>{el} </span>
+          {currentRSVP.length === 0 && <p>현재 진행중인 RSVP가 없습니다</p>}
+          {currentRSVP &&
+            !showHistory &&
+            currentRSVP.map((rsvp) => (
+              <Card
+                type="inner"
+                title={rsvp.name}
+                extra={
+                  <Button onClick={() => showModal(rsvp.link)}>
+                    RSVP 종료하기
+                  </Button>
+                }
+                style={{ marginBottom: 20 }}
+                headStyle={{ backgroundColor: "#d9e7fc" }}
+                bodyStyle={{ backgroundColor: "#f5f9ff" }}
+              >
+                {rsvp.responders.length === 0 && (
+                  <div>
+                    <p>받은 회신이 없습니다.</p>
+                  </div>
+                )}
+                {rsvp.responders.length > 0 && (
+                  <div>
+                    <p>총 회신 수 : {rsvp.responders.length}</p>
+                  </div>
+                )}
+
+                {rsvp.responders.length > 0 &&
+                  rsvp.responders.map((el) => (
+                    <p>
+                      {el.option}({el.number})
+                      {el.names.length > 0 && (
+                        <ul style={{ marginLeft: "20px" }}>
+                          {el.names.map((val) => (
+                            <li>
+                              {val.name}{" "}
+                              {val.reply && (
+                                <Popover
+                                  content={val.reply}
+                                  title="추신"
+                                  trigger="click"
+                                  placement="topLeft"
+                                >
+                                  <MailOutlined />
+                                </Popover>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </p>
                   ))}
-                </p>
-              </div>
-              {currentRSVP.description && (
+                <Divider>RSVP 내역</Divider>
                 <div>
                   <p>
-                    <b>모임 내용</b>
+                    <b>RSVP 링크</b>
                   </p>
-                  <p>{currentRSVP.description}</p>
+                  <p>{rsvp.link}</p>
                 </div>
-              )}
-              {currentRSVP.deadline && (
                 <div>
                   <p>
-                    <b>회신 기한</b>
+                    <b>시작 일시</b>
                   </p>
-                  <p>{currentRSVP.deadline}</p>
+                  <p>{convertToLocalDateTime(rsvp.startOn)}</p>
                 </div>
-              )}
-            </Card>
-          )}
+                <div>
+                  <p>
+                    <b>종료 일시</b>
+                  </p>
+                  <p>{convertToLocalDateTime(rsvp.endOn)}</p>
+                </div>
+                <div>
+                  <p>
+                    <b>모임 장소</b>
+                  </p>
+                  <p>{rsvp.location}</p>
+                </div>
+                <div>
+                  <p>
+                    <b>회신 옵션</b>
+                  </p>
+                  <p>
+                    {rsvp.options.map((el) => (
+                      <span>{convertOption(el)} </span>
+                    ))}
+                  </p>
+                </div>
+                {rsvp.description && (
+                  <div>
+                    <p>
+                      <b>모임 내용</b>
+                    </p>
+                    <p>{rsvp.description}</p>
+                  </div>
+                )}
+                {rsvp.timeLimit && (
+                  <div>
+                    <p>
+                      <b>회신 기한</b>
+                    </p>
+                    <p>{convertToLocalDateTime(rsvp.timeLimit)}</p>
+                  </div>
+                )}
+              </Card>
+            ))}
           {showHistory && (
             <div
               id="scrollableDiv"
@@ -505,7 +263,7 @@ const Me = () => {
               <InfiniteScroll
                 dataLength={history.length}
                 next={getHistoryRSVP}
-                hasMore={history.length < 8}
+                hasMore={history.length < historyTotal}
                 loader={
                   <Skeleton
                     paragraph={{
@@ -530,11 +288,10 @@ const Me = () => {
                           description={item.description}
                         />
                         <div>
-                          {item.location} / {item.startDateAndTime} ~{" "}
-                          {item.endDateAndTime}
+                          {item.location} / {item.startOn} ~ {item.endOn}
                         </div>
                       </List.Item>
-                      {displayDetailList.length > 0 &&
+                      {/* {displayDetailList.length > 0 &&
                         displayDetailList.find((el) => {
                           return el === item.name;
                         }) && (
@@ -564,7 +321,7 @@ const Me = () => {
                               </p>
                             ))}
                           </div>
-                        )}
+                        )} */}
                     </>
                   )}
                 />

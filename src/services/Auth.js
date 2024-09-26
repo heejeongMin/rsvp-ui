@@ -11,8 +11,10 @@ const KAKAO_AUTH_URL = process.env.REACT_APP_KAKAO_AUTH_URL;
 const KAKAO_TOKEN_URL = process.env.REACT_APP_KAKAO_TOKEN_URL;
 const KAKAO_USER_INFO_URL = process.env.REACT_APP_KAKAO_USER_INFO_URL;
 const KAKAO_LOGOUT_URL = process.env.REACT_APP_KAKAO_LOGOUT_URL;
-const RSVP_LOGIN_URL = process.env.REACT_APP_RSVP_LOGIN_URL;
-const RSVP_LOGOUT_URL = process.env.REACT_APP_RSVP_LOGOUT_URL;
+
+const RSVP_BASE_URL = process.env.REACT_APP_RSVP_BASE_URL;
+const RSVP_LOGIN_URI = process.env.REACT_APP_RSVP_LOGIN_URI;
+const RSVP_LOGOUT_URI = process.env.REACT_APP_RSVP_LOGOUT_URI;
 
 export const login = async () => {
   window.location.replace(
@@ -44,7 +46,7 @@ export const getToken = async (code) => {
     });
 
     const token = await axios.post(
-      `${RSVP_LOGIN_URL}`,
+      `${RSVP_BASE_URL}${RSVP_LOGIN_URI}`,
       {
         id: userInfo.data.id,
         nickName: userInfo.data.kakao_account.profile.nickname,
@@ -85,11 +87,9 @@ export const logout = async () => {
       },
     });
 
-    console.log(RSVP_LOGOUT_URL);
-
     await axios
       .post(
-        `${RSVP_LOGOUT_URL}`,
+        `${RSVP_BASE_URL}${RSVP_LOGOUT_URI}`,
         { snsId: res.data.id },
         {
           headers: {
@@ -100,7 +100,15 @@ export const logout = async () => {
       )
       .then(() => {
         result = "success";
-        store.dispatch(setToken(null));
+        store.dispatch(
+          setToken({
+            token: "",
+            sns_access_token: "",
+          })
+        );
+
+        window.localStorage.clear();
+        window.location.reload();
       });
   } catch (err) {
     console.log(err);
