@@ -1,7 +1,9 @@
 // src/RSVPForm.js
 import React, { useState, useEffect } from "react";
 import ActionResult from "../components/ActionResult";
-
+import { useLocation } from "react-router-dom";
+import { convertOption } from "../models/res/GetRSVPResponse.ts";
+import convertToLocalDateTime from "../util/DateTImeConverter.ts";
 import {
   Layout,
   theme,
@@ -14,6 +16,7 @@ import {
   Input,
 } from "antd";
 import { useParams } from "react-router-dom";
+import { getActiveRSVPApi, sendRSVPApi } from "../services/RsvpAdapter.ts";
 
 const { Content } = Layout;
 
@@ -41,59 +44,41 @@ const RSVPForm = () => {
     },
   };
 
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const { id } = useParams(); // Get unique ID from the URL
   // const [name, setName] = useState("");
   // const [willAttend, setWillAttend] = useState("yes");
   const [submitted, setSubmitted] = useState(0);
+  const [errorMsg, setErrorMsg] = useState(
+    "다시 시도해주세요. 계속 실패 시 앱스토어로 연락부탁드립니다."
+  );
   var [rsvpForm, setRsvpForm] = useState({});
+  const [form] = Form.useForm();
+
+  const pathname = location.pathname;
 
   useEffect(() => {
-    // Fetch form data based on ID if needed
-    // e.g., fetch(`/api/getFormData/${id}`).then(...)
-    const fetchRSVPFrom = async () => {
-      setRsvpForm({
-        name: "test-rsvp-name",
-        startDateAndTime: "2024-08-18 09:00",
-        endDateAndTime: "2024-08-18 18:00",
-        location: "online",
-        options: [
-          {
-            label: "참가",
-            value: "Y",
-          },
-          {
-            label: "불참",
-            value: "N",
-          },
-          {
-            label: "미정",
-            value: "YN",
-          },
-        ],
-        deadline: "2024-08-17 17:00",
-        // description: "testset",
-      });
+    getActiveRSVPApi(pathname).then((res) => {
+      setRsvpForm(res);
       setLoading(false);
-    };
-    fetchRSVPFrom();
+    });
   }, [id]);
 
   const handleSubmit = () => {
-    setLoading(true);
-    var result = 2;
-
+    setLoading(pathname);
     try {
-      //call api
-      result = 1;
+      sendRSVPApi(pathname, form).then((res) => {
+        if (res === "success") {
+          setSubmitted(1);
+        }
+      });
     } catch (error) {
-      console.log(error);
+      setSubmitted(2);
+      setErrorMsg(error);
     } finally {
       setLoading(false);
-      setSubmitted(result);
     }
-
-    console.log(submitted);
   };
 
   if (submitted === 1) {
@@ -108,8 +93,8 @@ const RSVPForm = () => {
     return (
       <ActionResult
         result="error"
-        title="개발자에게 이메일 전송에 실패하였습니다."
-        message="다시 시도해주세요. 계속 실패 시 앱스토어로 연락부탁드립니다."
+        title="주최자에게 회신 전송에 실패하였습니다."
+        message={errorMsg}
         directToMe="false"
       />
     );
@@ -140,13 +125,13 @@ const RSVPForm = () => {
             <p>
               <b>시작 일시</b>
             </p>
-            <p>{rsvpForm.startDateAndTime}</p>
+            <p>{convertToLocalDateTime(rsvpForm.startOn)}</p>
           </div>
           <div>
             <p>
               <b>종료 일시</b>
             </p>
-            <p>{rsvpForm.endDateAndTime}</p>
+            <p>{convertToLocalDateTime(rsvpForm.endOn)}</p>
           </div>
           <div>
             <p>
@@ -162,16 +147,17 @@ const RSVPForm = () => {
               <p>{rsvpForm.description}</p>
             </div>
           )}
-          {rsvpForm.deadline && (
+          {rsvpForm.timeLimit && (
             <div>
               <p>
                 <b>회신 기한</b>
               </p>
-              <p>{rsvpForm.deadline}</p>
+              <p>{convertToLocalDateTime(rsvpForm.timeLimit)}</p>
             </div>
           )}
           <Divider>RSVP</Divider>
           <Form
+            form={form}
             {...formItemLayout}
             variant="filled"
             onFinish={handleSubmit}
@@ -188,11 +174,10 @@ const RSVPForm = () => {
                 },
               ]}
             >
-              {/* <Select style={{ width: "100%" }} options={rsvpForm.options} /> */}
               <Radio.Group>
                 <Space direction="vertical">
                   {rsvpForm.options.map((el) => (
-                    <Radio value={el.value}>{el.label}</Radio>
+                    <Radio value={el}>{convertOption(el)}</Radio>
                   ))}
                 </Space>
               </Radio.Group>
@@ -204,7 +189,7 @@ const RSVPForm = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item label="회신" name="reply">
+            <Form.Item label="회신" name="message">
               <Input.TextArea />
             </Form.Item>
             <Form.Item

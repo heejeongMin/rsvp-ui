@@ -1,4 +1,6 @@
-export class GetRSVPResponse {
+import { IResponse } from "./ResponseWapper";
+
+export class GetRSVPResponse implements IResponse {
   name: string;
   link: string;
   email: string;

@@ -19,6 +19,7 @@ const Home = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [result, setResult] = useState(false);
+  const [resultLink, setResultLink] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const info = () => {
@@ -58,10 +59,13 @@ const Home = () => {
   };
 
   const handleOk = () => {
-    createRSVP(form);
-    //call backend
-    closeModal();
-    setResult(true);
+    createRSVP(form).then((res) => {
+      if (res != null) {
+        closeModal();
+        setResult(true);
+        setResultLink(res.link);
+      }
+    });
   };
 
   const handleCancel = () => {
@@ -73,7 +77,7 @@ const Home = () => {
       <ActionResult
         result="success"
         title="RSVP 보내기 성공"
-        message={"RSVP 링크 : http://localhost:3000/rsvp/123"}
+        message={`RSVP 링크 : ${resultLink}`}
       />
     );
   }

@@ -78,14 +78,30 @@ export const logout = async () => {
   var result = "failed";
 
   try {
-    const res = await axios.post(`${KAKAO_LOGOUT_URL}`, null, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
-        Authorization: `Bearer ${
-          store.getState().login.token.sns_access_token
-        }`,
-      },
-    });
+    const res = await axios
+      .post(`${KAKAO_LOGOUT_URL}`, null, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+          Authorization: `Bearer ${
+            store.getState().login.token.sns_access_token
+          }`,
+        },
+      })
+      .catch(function (error) {
+        console.log(error);
+        return null;
+      });
+
+    if (res == null) {
+      result = "success";
+      store.dispatch(
+        setToken({
+          token: "",
+          sns_access_token: "",
+        })
+      );
+      return result;
+    }
 
     await axios
       .post(

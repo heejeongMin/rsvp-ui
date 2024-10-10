@@ -1,8 +1,7 @@
 import { GetRSVPResponse } from "./GetRSVPResponse";
-import { PageInfo } from "./PageInfo";
 import { IResponse } from "./ResponseWapper";
 
-export class GetHistoryRSVPResponse implements IResponse {
+export class GetActiveRSVPListResponse implements IResponse {
+  isActive: boolean;
   rsvp: GetRSVPResponse[];
-  pageInfo: PageInfo;
 }
