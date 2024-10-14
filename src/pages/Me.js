@@ -310,6 +310,12 @@ const Me = () => {
                         <List.Item
                           key={item.name}
                           onClick={collapseHistoryDetail}
+                          style={{
+                            cursor:
+                              item.responders.length > 0
+                                ? "pointer"
+                                : "default",
+                          }}
                         >
                           <List.Item.Meta
                             title={<p>{item.name}</p>}
