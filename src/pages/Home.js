@@ -108,7 +108,7 @@ const Home = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            label="생성자 이메일 (해당 이메일로 회신을 받게됩니다.)"
+            label="생성자 이메일"
             name="email"
             rules={[{ required: true, message: "생성자 이메일을 입력하세요" }]}
           >

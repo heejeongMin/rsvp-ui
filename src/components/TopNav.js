@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Layout, Menu, Popover, message } from "antd";
-import { HomeOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
+import {
+  HomeOutlined,
+  UserOutlined,
+  MailOutlined,
+  LoginOutlined,
+  LogoutOutlined,
+} from "@ant-design/icons";
 import "antd/dist/reset.css"; // Import Ant Design styles by default
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
@@ -82,19 +88,11 @@ const TopNav = () => {
             <Link to="/contact">Contact</Link>
           </Menu.Item>
           <Menu.Item key="loginLogout" style={{ marginLeft: "auto" }}>
-            {loginTxt === "login" && (
-              <Popover
-                content={
-                  <a>
-                    <img src={kakaoLogin} onClick={handle} />
-                  </a>
-                }
-              >
-                <Button>{loginTxt}</Button>
-              </Popover>
-            )}
+            {loginTxt === "login" && <img src={kakaoLogin} onClick={handle} />}
             {loginTxt === "logout" && (
-              <Button onClick={handle}>{loginTxt}</Button>
+              <>
+                <LogoutOutlined /> <span onClick={handle}>{loginTxt}</span>
+              </>
             )}
           </Menu.Item>
         </Menu>

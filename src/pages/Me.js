@@ -228,7 +228,7 @@ const Me = () => {
                     <p>
                       <b>RSVP 링크</b>
                     </p>
-                    <p>{rsvp.link}</p>
+                    <p style={{ overflowWrap: "break-word" }}>{rsvp.link}</p>
                   </div>
                   <div>
                     <p>

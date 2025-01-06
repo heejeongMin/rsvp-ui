@@ -56,8 +56,8 @@ export const getActiveRSVPApi = async (path: string) => {
     .then((res) => res.data)
     .catch((error) => {
       return new ResponseWrapper(
-        (errorCode = error.code),
-        (errorMessage = error.message)
+        error.code,
+        error.response.data.message
       );
     });
 

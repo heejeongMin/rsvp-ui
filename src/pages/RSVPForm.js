@@ -50,6 +50,7 @@ const RSVPForm = () => {
   // const [name, setName] = useState("");
   // const [willAttend, setWillAttend] = useState("yes");
   const [submitted, setSubmitted] = useState(0);
+  const [guestAccess, setGuestAccess] = useState(0);
   const [errorMsg, setErrorMsg] = useState(
     "다시 시도해주세요. 계속 실패 시 앱스토어로 연락부탁드립니다."
   );
@@ -60,8 +61,14 @@ const RSVPForm = () => {
 
   useEffect(() => {
     getActiveRSVPApi(pathname).then((res) => {
-      setRsvpForm(res);
-      setLoading(false);
+      if (res.errorCode !== undefined) {
+        setErrorMsg(res.errorMessage);
+        setGuestAccess(1);
+        console.log(res);
+      } else {
+        setRsvpForm(res);
+        setLoading(false);
+      }
     });
   }, [id]);
 
@@ -98,6 +105,17 @@ const RSVPForm = () => {
         directToMe="false"
       />
     );
+  }
+
+  if(guestAccess === 1) {
+      return (
+            <ActionResult
+              result="error"
+              title="비정상적인 접근입니다."
+              message={errorMsg}
+              directToMe="false"
+            />
+     );
   }
 
   if (loading) {
